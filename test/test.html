@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+ <html>
+     <head>
+         <meta charset="gbk">
+         <title>三角形剖分显示器</title>
+         <style type="text/css">
+             #area{width:100%;height:200px; line-height: 200px; text-align: center; border: 1px solid #DDDDDD;}
+             #prev{width:100%;min-height: 400px; border: 1px solid #FF0000;}
+         </style>
+     </head>
+     <body>
+         <div id="area">将剖分文件拖放到该区域</div>
+         <h1>剖分预览</h1>
+         <hr />
+         <div id="prev"></div>
+         <canvas style="width:500px;height:500px;border:2px;" id="canvas"></canvas>
+     </body>
+ 
+     <div>
+         <script>
+             const canvas = document.getElementById("canvas");
+             const ctx = canvas.getContext("2d"); 
+
+
+             function drawRect(numbers) {
+                 console.log(numbers)
+                 //numbers = numbers.split(" ");
+                 ctx.strokeStyle = "green";
+                 ctx.strokeRect(20, 10, 160, 100);
+
+
+                 for (var i = 0; i < numbers.length; i++) {
+                     numbers[i] = parseInt(numbers[i])
+                 }
+                 console.log(numbers)
+
+                 var step = 100
+                 console.log("start drawing");
+                 //const canvas = document.getElementById("canvas");
+                 //const ctx = canvas.getContext("2d");
+                 canvas.width = numbers[0]*step;
+                 canvas.height = numbers[1]*step;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                 console.log(canvas.width);
+                 for (var i = 2; i < numbers.length; i = i + 6) {
+                     ctx.moveTo(numbers[i] * step, numbers[i + 1] * step);
+                     ctx.lineTo(numbers[i + 2] * step, numbers[i + 3] * step    );
+                     ctx.lineTo(numbers[i + 4] * step, numbers[i + 5] * step);
+                     ctx.lineTo(numbers[i] * step, numbers[i + 1] * step);
+                     ctx.stroke();
+                 }
+                 ctx.strokeRect(0, 0, parseInt(numbers[1]), parseInt(numbers[1]));
+             }
+             window.onload = function () {
+
+
+
+
+
+                 var oArea = document.getElementById("area");
+                 var oPrev = document.getElementById("prev");
+
+                 oArea.ondragenter = function () {
+                     oArea.innerHTML = "请释放鼠标";
+                 }
+                 oArea.ondragleave = function () {
+                     oArea.innerHTML = "将图片拖放到该区域";
+                 }
+                 oArea.ondragover = function (ev) {
+                     ev.preventDefault();
+                 }
+                 oArea.ondrop = function (ev) {
+                     ev.preventDefault();
+                     var files = ev.dataTransfer.files;
+                     for (var i = 0, len = files.length; i < len; i++) {
+                         var file = files[i];
+                         var reader = new FileReader();
+                         reader.readAsText(file);
+                         (function (reader) {
+                             reader.onload = function () {
+                                 var oImg = document.createElement("p");
+                                 oImg.innerHTML = this.result;
+                                 oPrev.appendChild(oImg);
+                                 var numbers = this.result.split(" ");
+                                 drawRect(numbers);
+                             }
+                         })(reader);
+
+                     }
+
+                 }
+
+             }
+         </script>
+     </div>
+</html>
